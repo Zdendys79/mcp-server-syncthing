@@ -1,8 +1,9 @@
 # STATUS.md - MCP Syncthing Server
 
-**Last Updated:** 2026-01-08 08:15 UTC
+**Last Updated:** 2026-01-08 08:30 UTC
 **Version:** 1.0.0
 **Status:** Built and ready for use
+**GitHub:** https://github.com/Zdendys79/mcp-server-syncthing
 
 ---
 
@@ -25,13 +26,14 @@
 - [x] Git initialization and first commit (0eadfcf)
 
 ### Pending
-- [ ] Move SYNCTHING_API_KEY from ~/.bashrc to ~/.profile (GUI apps don't load .bashrc)
+- [ ] Logout/login to load new ~/.profile
 - [ ] Restart Claude Desktop to load MCP server
-- [ ] Testing with real Syncthing instance
-- [ ] Optional: GitHub remote repository setup
+- [ ] Testing with real Syncthing instance in new Claude Code session
 
 ### Configuration Files Created
 - [x] `~/.config/claude/claude_desktop_config.json` - MCP server config (no hardcoded secrets)
+- [x] GitHub repository: https://github.com/Zdendys79/mcp-server-syncthing
+- [x] All environment variables moved from ~/.bashrc to ~/.profile
 
 ---
 
