@@ -1,8 +1,8 @@
 # STATUS.md - MCP Syncthing Server
 
-**Last Updated:** 2026-01-08 08:00 UTC
+**Last Updated:** 2026-01-08 08:15 UTC
 **Version:** 1.0.0
-**Status:** Initial implementation complete
+**Status:** Built and ready for use
 
 ---
 
@@ -19,13 +19,15 @@
 - [x] README.md documentation
 - [x] CLAUDE.md project instructions
 - [x] .gitignore
+- [x] TypeScript type safety fix (API_KEY strict typing)
+- [x] npm install (dependencies installed)
+- [x] npm run build (compiled to dist/index.js)
+- [x] Git initialization and first commit (0eadfcf)
 
 ### Pending
-- [ ] npm install (dependencies not yet installed)
-- [ ] npm run build (not yet compiled)
 - [ ] Claude Desktop configuration (user must configure)
 - [ ] Testing with real Syncthing instance
-- [ ] Git initialization and first commit
+- [ ] Optional: GitHub remote repository setup
 
 ---
 
@@ -46,12 +48,25 @@
 ## Next Steps
 
 ### Immediate (User Actions Required)
-1. Install dependencies: `cd ~/mcp-servers/syncthing && npm install`
-2. Build project: `npm run build`
-3. Get Syncthing API key from web UI
-4. Configure Claude Desktop with API key
-5. Restart Claude Desktop
-6. Test tools in Claude Code session
+1. ✅ ~~Install dependencies~~ - DONE
+2. ✅ ~~Build project~~ - DONE
+3. Configure Claude Desktop in `~/.config/claude/claude_desktop_config.json`:
+   ```json
+   {
+     "mcpServers": {
+       "syncthing": {
+         "command": "node",
+         "args": ["/home/zdendys/mcp-servers/syncthing/dist/index.js"],
+         "env": {
+           "SYNCTHING_API_KEY": "YOUR_API_KEY_HERE",
+           "SYNCTHING_API_URL": "http://localhost:8384"
+         }
+       }
+     }
+   }
+   ```
+4. Restart Claude Desktop
+5. Test tools in new Claude Code session
 
 ### Future Enhancements
 - Add more control tools (pause/resume folder)
@@ -97,9 +112,12 @@ None yet - pending first test run.
 ```
 ~/mcp-servers/syncthing/
 ├── src/
-│   └── index.ts          [CREATED] Main MCP server (349 lines)
-├── dist/                 [PENDING] Build output
-├── node_modules/         [PENDING] Dependencies
+│   └── index.ts          [CREATED] Main MCP server (335 lines, type-safe)
+├── dist/                 [BUILT] Compiled JavaScript output
+│   ├── index.js          10.5 KB - executable MCP server
+│   ├── index.d.ts        TypeScript declarations
+│   └── *.map             Source maps for debugging
+├── node_modules/         [INSTALLED] 94 packages, 0 vulnerabilities
 ├── package.json          [CREATED]
 ├── tsconfig.json         [CREATED]
 ├── README.md             [CREATED] User documentation
