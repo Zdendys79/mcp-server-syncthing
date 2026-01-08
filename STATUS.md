@@ -25,9 +25,13 @@
 - [x] Git initialization and first commit (0eadfcf)
 
 ### Pending
-- [ ] Claude Desktop configuration (user must configure)
+- [ ] Move SYNCTHING_API_KEY from ~/.bashrc to ~/.profile (GUI apps don't load .bashrc)
+- [ ] Restart Claude Desktop to load MCP server
 - [ ] Testing with real Syncthing instance
 - [ ] Optional: GitHub remote repository setup
+
+### Configuration Files Created
+- [x] `~/.config/claude/claude_desktop_config.json` - MCP server config (no hardcoded secrets)
 
 ---
 
