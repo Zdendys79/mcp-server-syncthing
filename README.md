@@ -26,14 +26,29 @@ npm install
 npm run build
 ```
 
-### 2. Set Environment Variables
+### 2. Set System Environment Variables
 
-Add to your `~/.bashrc` or `~/.profile`:
+**Option A: System-wide (Recommended)**
 
+Add to `/etc/environment`:
+```bash
+SYNCTHING_API_KEY="your-api-key-here"
+SYNCTHING_API_URL="http://localhost:8384"
+```
+
+Then logout/login for changes to take effect.
+
+**Option B: User profile**
+
+Add to `~/.profile` (NOT `~/.bashrc`):
 ```bash
 export SYNCTHING_API_KEY="your-api-key-here"
-export SYNCTHING_API_URL="http://localhost:8384"  # Optional, defaults to localhost:8384
+export SYNCTHING_API_URL="http://localhost:8384"
 ```
+
+Then logout/login for changes to take effect.
+
+**Note:** `~/.bashrc` only works for terminal sessions, not GUI apps like Claude Desktop.
 
 To find your API key:
 - Open Syncthing web UI (usually http://localhost:8384)
@@ -49,15 +64,13 @@ Add to `~/.config/claude/claude_desktop_config.json`:
   "mcpServers": {
     "syncthing": {
       "command": "node",
-      "args": ["/home/zdendys/mcp-servers/syncthing/dist/index.js"],
-      "env": {
-        "SYNCTHING_API_KEY": "your-api-key-here",
-        "SYNCTHING_API_URL": "http://localhost:8384"
-      }
+      "args": ["/home/zdendys/mcp-servers/syncthing/dist/index.js"]
     }
   }
 }
 ```
+
+**Note:** Environment variables are loaded from system, not hardcoded in config.
 
 ### 4. Restart Claude Desktop
 
