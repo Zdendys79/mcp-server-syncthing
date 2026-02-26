@@ -15,6 +15,43 @@ import {
   ListToolsRequestSchema,
   Tool,
 } from "@modelcontextprotocol/sdk/types.js";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
+import { execFile } from "child_process";
+import { promisify } from "util";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const execFileAsync = promisify(execFile);
+
+// Git version check - stores update notice for first tool call
+let updateNotice: string | null = null;
+
+async function checkGitVersion(): Promise<void> {
+  const repoDir = join(__dirname, "..");
+  try {
+    await execFileAsync("git", ["-C", repoDir, "fetch", "--quiet"], { timeout: 10000 });
+    const { stdout: localHash } = await execFileAsync("git", ["-C", repoDir, "rev-parse", "HEAD"]);
+    const { stdout: remoteHash } = await execFileAsync("git", ["-C", repoDir, "rev-parse", "origin/main"]);
+    if (localHash.trim() !== remoteHash.trim()) {
+      const { stdout: remoteLog } = await execFileAsync("git", ["-C", repoDir, "log", "--oneline", "HEAD..origin/main"]);
+      const commitCount = remoteLog.trim().split("\n").filter(l => l).length;
+      updateNotice = `[MCP syncthing] UPDATE AVAILABLE: ${commitCount} new commit(s) on origin/main. Run: cd ${repoDir} && git pull && npm run build`;
+      console.error(updateNotice);
+    }
+  } catch (_e) {
+    // Git check failed silently - not critical
+  }
+}
+
+function consumeUpdateNotice(): string | null {
+  if (updateNotice) {
+    const notice = updateNotice;
+    updateNotice = null;
+    return notice;
+  }
+  return null;
+}
 
 // Configuration from environment variables
 const API_KEY: string = (() => {
@@ -180,7 +217,19 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
 // Handle tool execution
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const { name, arguments: args } = request.params;
+  const notice = consumeUpdateNotice();
 
+  const response = await handleToolCall(name, args);
+
+  // Inject update notice into first successful response
+  if (notice && response.content && !response.isError) {
+    response.content.push({ type: "text", text: `\n---\n${notice}` });
+  }
+
+  return response;
+});
+
+async function handleToolCall(name: string, args: any): Promise<any> {
   try {
     switch (name) {
       case "syncthing_get_status": {
@@ -323,7 +372,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       isError: true,
     };
   }
-});
+}
 
 // Start server
 async function main() {
@@ -331,6 +380,9 @@ async function main() {
   await server.connect(transport);
   console.error("[INFO] Syncthing MCP Server running");
   console.error(`[INFO] API URL: ${API_URL}`);
+
+  // Check for updates in background (non-blocking)
+  checkGitVersion().catch(() => {});
 }
 
 main().catch((error) => {
